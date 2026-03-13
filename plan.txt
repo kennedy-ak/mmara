@@ -1,0 +1,55 @@
+# Plan: Fix Stats Labels, Remove AI Disclaimer, Add Markdown Rendering
+
+## Context
+The MMara app has three UX issues visible in the chat screen:
+1. Stats on the profile page have developer-oriented labels that aren't clear to users
+2. The AI response includes a disclaimer in every message body, duplicating the app's permanent disclaimer widget at the bottom
+3. The AI response always adds "Practical Implications" even when not needed, making responses bloated
+4. AI responses contain markdown (**bold**) but the chat bubble renders plain text, showing raw asterisks
+
+## Changes
+
+### 1. Fix Stats Labels (mmara/lib/screens/profile/profile_screen.dart)
+- Rename "Total Queries" -> "Questions Asked"
+- Rename "Avg Response" -> "Avg Response Time" (clearer)
+- "This Month" and "Satisfaction" labels are fine, keep them
+
+### 2. Remove In-Response Disclaimer (Backend)
+
+mmara-backend/app/config.py (lines 188-211):
+- Remove guideline #3 ("Include Disclaimer: Every response must include...")
+- Update guideline #8 structure to:
+  - Direct answer
+  - Relevant legal provisions with citations
+  - Practical implications (when relevant)
+  - When to seek professional legal help
+  - (Disclaimer removed - app has permanent disclaimer widget)
+
+mmara-backend/app/agents/safety.py:
+- ResponseValidator: remove disclaimer enforcement (lines 153-156, 163-195)
+- Keep the ResponseValidator class but remove disclaimer checking/appending logic
+- Keep SafetyAgent.DISCLAIMER constant but don't enforce it in responses
+
+### 3. Add Markdown Rendering (Flutter)
+
+mmara/pubspec.yaml:
+- Add flutter_markdown: ^0.7.6 dependency
+
+mmara/lib/widgets/chat/message_bubble.dart (line 77-83):
+- Replace SelectableText with MarkdownBody from flutter_markdown for AI messages
+- Keep SelectableText for user messages (user messages don't contain markdown)
+
+### 4. Files to modify
+- mmara/lib/screens/profile/profile_screen.dart - stat labels
+- mmara-backend/app/config.py - system prompt (remove disclaimer instruction)
+- mmara-backend/app/agents/safety.py - remove disclaimer enforcement in ResponseValidator
+- mmara/pubspec.yaml - add flutter_markdown
+- mmara/lib/widgets/chat/message_bubble.dart - markdown rendering for AI bubbles
+
+## Verification
+1. Run flutter pub get after adding flutter_markdown
+2. Run dart analyze to check for errors
+3. Test on device: send a message, verify AI response no longer has in-body disclaimer
+4. Verify markdown bold/lists render properly in chat bubbles
+5. Check profile page stats show updated labels
+6. Verify the permanent disclaimer widget still shows at bottom of chat screen
