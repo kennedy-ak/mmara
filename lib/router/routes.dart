@@ -21,6 +21,7 @@ class Routes {
 
   // Settings routes
   static const String settings = '/settings';
+  static const String bugReport = '/settings/bug-report';
 
   // Initial route
   static const String initial = splash;
@@ -44,6 +45,7 @@ class Routes {
     editProfile,
     changePassword,
     settings,
+    bugReport,
   };
 
   // Routes that redirect to chat if already authenticated

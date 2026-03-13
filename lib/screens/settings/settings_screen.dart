@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:package_info_plus/package_info_plus.dart';
+import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import '../../router/routes.dart';
 
@@ -71,6 +72,11 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
             icon: Icons.contact_page_outlined,
             title: 'Contact Us',
             onTap: () => _showComingSoon('Contact Us'),
+          ),
+          _SettingsTile(
+            icon: Icons.bug_report_outlined,
+            title: 'Report a Bug',
+            onTap: () => context.push(Routes.bugReport),
           ),
 
           // App info

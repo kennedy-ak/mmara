@@ -39,7 +39,7 @@ class AppConfig {
     switch (env) {
       case Env.dev:
         // Local development - HTTP acceptable for emulator
-        return 'http://10.0.2.2:8004';
+        return 'http://10.0.2.2:8000';
       case Env.staging:
         // Staging - should use HTTPS in real deployment
         return 'https://staging-api.yourdomain.com';

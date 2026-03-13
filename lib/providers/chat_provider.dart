@@ -132,40 +132,46 @@ class ChatMessages extends _$ChatMessages {
 }
 
 /// Provider for current session ID with persistence.
-@riverpod
+@Riverpod(keepAlive: true)
 class CurrentSessionId extends _$CurrentSessionId {
   static const String _key = 'current_chat_session_id';
-  bool _loaded = false;
 
   @override
   String? build() {
-    // Load persisted session ID on init
-    _loadSessionId();
+    // Return null initially - the actual value is loaded asynchronously
+    // and set via state = sessionId when loading completes
     return null;
   }
 
-  Future<void> _loadSessionId() async {
-    if (_loaded) return;
+  /// Load the persisted session ID from storage.
+  Future<String?> loadPersisted() async {
     final prefs = await SharedPreferences.getInstance();
     final sessionId = prefs.getString(_key);
-    _loaded = true;
     if (sessionId != null) {
       state = sessionId;
     }
+    return sessionId;
   }
 
   /// Ensure the persisted session ID has been loaded.
   Future<String?> ensureLoaded() async {
-    if (!_loaded) {
-      await _loadSessionId();
+    final prefs = await SharedPreferences.getInstance();
+    final sessionId = prefs.getString(_key);
+    if (sessionId != null) {
+      state = sessionId;
     }
-    return state;
+    return sessionId;
   }
 
   /// Set the current session ID and persist it.
-  void setSessionId(String? sessionId) async {
+  void setSessionId(String? sessionId) {
+    // Update state immediately (synchronously)
     state = sessionId;
-    _loaded = true;
+    // Persist asynchronously
+    _persistSessionId(sessionId);
+  }
+
+  Future<void> _persistSessionId(String? sessionId) async {
     final prefs = await SharedPreferences.getInstance();
     if (sessionId != null) {
       await prefs.setString(_key, sessionId);
@@ -175,9 +181,14 @@ class CurrentSessionId extends _$CurrentSessionId {
   }
 
   /// Clear the session ID from memory and storage.
-  void clearSessionId() async {
+  void clearSessionId() {
+    // Update state immediately (synchronously)
     state = null;
-    _loaded = true;
+    // Remove from storage asynchronously
+    _removePersistedSessionId();
+  }
+
+  Future<void> _removePersistedSessionId() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_key);
   }

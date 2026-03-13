@@ -14,6 +14,7 @@ import '../screens/profile/profile_screen.dart';
 import '../screens/profile/edit_profile_screen.dart';
 import '../screens/profile/change_password_screen.dart';
 import '../screens/settings/settings_screen.dart';
+import '../screens/settings/bug_report_screen.dart';
 
 /// A ChangeNotifier that listens to a Riverpod provider and notifies GoRouter.
 class _AuthNotifier extends ChangeNotifier {
@@ -142,11 +143,18 @@ final goRouterProvider = Provider<GoRouter>((ref) {
         builder: (context, state) => const ChangePasswordScreen(),
       ),
 
-      // Settings route
+      // Settings routes
       GoRoute(
         path: Routes.settings,
         name: 'settings',
         builder: (context, state) => const SettingsScreen(),
+        routes: [
+          GoRoute(
+            path: 'bug-report',
+            name: 'bug_report',
+            builder: (context, state) => const BugReportScreen(),
+          ),
+        ],
       ),
     ],
   );

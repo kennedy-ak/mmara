@@ -61,14 +61,14 @@ final chatMessagesProvider =
     );
 
 typedef _$ChatMessages = AutoDisposeNotifier<List<ChatMessage>>;
-String _$currentSessionIdHash() => r'c20653c868c3c264b518390d2bfb3f95b99d1b35';
+String _$currentSessionIdHash() => r'6f896da00bd25fab4e79fad1618d47a11a7592de';
 
 /// Provider for current session ID with persistence.
 ///
 /// Copied from [CurrentSessionId].
 @ProviderFor(CurrentSessionId)
 final currentSessionIdProvider =
-    AutoDisposeNotifierProvider<CurrentSessionId, String?>.internal(
+    NotifierProvider<CurrentSessionId, String?>.internal(
       CurrentSessionId.new,
       name: r'currentSessionIdProvider',
       debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
@@ -78,7 +78,7 @@ final currentSessionIdProvider =
       allTransitiveDependencies: null,
     );
 
-typedef _$CurrentSessionId = AutoDisposeNotifier<String?>;
+typedef _$CurrentSessionId = Notifier<String?>;
 String _$sendMessageNotifierHash() =>
     r'6ae64327d3998dbdefba06c2cc4a0e9b905682fd';
 
